@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.liudan.cms.dao.CommentMapper">
+
+	<resultMap type="comment" id="commentResultMap">
+		<id column="id" property="id"/>
+		<result column="content" property="content"/>
+		<result column="created" property="created"/>
+		<association property="user" javaType="user" select="com.liudan.cms.dao.UserMapper.selectByPrimaryKey" column="user_id"></association>
+		<association property="article" javaType="article" select="com.liudan.cms.dao.ArticleMapper.selectByPrimaryKey" column="article_id"></association>
+	</resultMap>
+	
+	<!-- 查询文章的方法 -->
+	<select id="selects" resultMap="commentResultMap">
+		select c.* from cms_comment c left join cms_user u on c.user_id = u.id
+		where c.article_id=#{articleId}
+		order by c.created desc 
+	</select>
+	
+	<!-- 添加数据的方法 -->
+	<insert id="insert">
+		insert into cms_comment (user_id,article_id,content,created) values(#{user.id},#{article.id},#{content},#{created})
+	</insert>
+</mapper>
